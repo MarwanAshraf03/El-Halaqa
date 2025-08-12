@@ -1,4 +1,3 @@
-import e from "express";
 import { Attendance } from "./FileStorageSystem/attendance.js";
 
 const AttendanceSystem = new Attendance("2023-10-01");
