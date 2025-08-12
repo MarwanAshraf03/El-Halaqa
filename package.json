@@ -1,0 +1,25 @@
+{
+  "name": "express",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "nodemon server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "express": "^4.21.2",
+    "ioredis": "^5.4.2",
+    "mongoose": "^8.9.3",
+    "mosca": "^2.8.3",
+    "mqtt": "^5.10.3",
+    "redis": "^4.7.0",
+    "uuid": "^11.0.5",
+    "bcrypt": "^5.1.1",
+    "validator": "^13.12.0"
+  }
+}
