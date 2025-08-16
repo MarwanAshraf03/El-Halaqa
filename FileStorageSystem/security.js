@@ -4,8 +4,7 @@ import { User } from "./user.js";
 export class Security {
   static authenticate(userName, password) {
     const user = User.getUser({ userName: userName });
-    const passwordHashed = bcrypt.hashSync(password, 10); // Hash the password
-    if (user && bcrypt.compareSync(password, passwordHashed)) {
+    if (user && bcrypt.compareSync(password, user.password)) {
       return true;
     } else {
       return false;

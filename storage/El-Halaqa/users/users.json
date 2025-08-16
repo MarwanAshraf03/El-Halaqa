@@ -1,0 +1,26 @@
+{
+  "5c172cd1-0a94-4551-ba06-bfc4416bfd4f": {
+    "userName": "mario",
+    "password": "$2b$10$MYNoemoax8d/EeuzGxx4Pegn.Doq9RcbVQbGOtaIFfe2AXgW3TNk6",
+    "type": "Mem",
+    "id": "5c172cd1-0a94-4551-ba06-bfc4416bfd4f"
+  },
+  "c20122aa-970b-4960-bcd8-05f6b1c3be31": {
+    "userName": "marwan@ashraf",
+    "password": "$2b$10$oBja.QkZ.BP.QbRfl2b7oOHXTfziGXQd/xY99BGzTqDJWaUt8MANi",
+    "type": "admin",
+    "id": "c20122aa-970b-4960-bcd8-05f6b1c3be31"
+  },
+  "769f1089-bf99-4bea-aef8-b07e5ff86d0b": {
+    "userName": "marwan@ashraf2",
+    "password": "$2b$10$V.Q3/l2FtNC0yG0.D.VyOOHEDTMwmqToRzkWu4cxPcrGc18lHE5dm",
+    "type": "Mem",
+    "id": "769f1089-bf99-4bea-aef8-b07e5ff86d0b"
+  },
+  "3d19283c-f318-4856-99c4-c54efa232e6e": {
+    "userName": "marwan@ashraf3",
+    "password": "$2b$10$iaXqOFTgKkCm4aeyQ3YAeu6NgQbHlyxnS9mXNXZXrCjgG7tlPxc06",
+    "type": "Rev",
+    "id": "3d19283c-f318-4856-99c4-c54efa232e6e"
+  }
+}

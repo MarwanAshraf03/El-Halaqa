@@ -1,0 +1,20 @@
+{
+  "id": "ec8f279d-7349-4610-a289-c53acb5209ce",
+  "name_eng": "John Doe",
+  "name_arb": "جون دو",
+  "bDate": "2000-01-01",
+  "logs": {
+    "0bb6f122-d669-41bf-ab0b-7c8a925f0428@1755092900402": {
+      "teacherId": "teacherId",
+      "memDone": "memDone",
+      "memGrade": "memGrade",
+      "revDone": "revDone",
+      "revGrade": "revGrade",
+      "time": "time",
+      "notes": "notes"
+    }
+  },
+  "school": "Example School",
+  "overAllMem": 100,
+  "newMem": 10
+}

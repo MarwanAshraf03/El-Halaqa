@@ -99,6 +99,10 @@ export class User {
     }
   }
 
+  get_id() {
+    return this.#id;
+  }
+
   getUserInfo() {
     if (!this.#id) {
       const user = this.saveUser(this.#type);
@@ -124,6 +128,7 @@ export class User {
     if (this.#id) {
       throw new Error("User already exists.");
     }
+    console.log("the type provided is ", type);
     if (["admin", "Mem", "Rev"].indexOf(type) === -1) {
       throw new Error("Invalid user type. Must be one of: admin, Mem, or Rev.");
     }

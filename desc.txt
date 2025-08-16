@@ -1,0 +1,313 @@
+import { generateStdList } from "./FileStorageSystem/std_list.js";
+import { FileStorageSystemController } from "./FileStorageSystem/FileStorageSystemController.js";
+import express from "express";
+// import router from "./server/routes/index.js";
+// import cors from "cors";
+
+const app = express();
+const port = 3000;
+const routes = [
+  "/ => get",
+  "/std_list => get",
+  "/take_attendance => post",
+  "/create_teacher => post",
+  "/get_teacher => get",
+  "/create_student => post",
+  "/get_student => get",
+  "/authenticate_teacher => post",
+  "/add_log_to_student => post",
+  "/get_logs => get",
+];
+
+// app.use(app.json());
+app.use(express.json());
+// app.use(app.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: true }));
+app.get("/", (req, res) => {
+  res.send("Welcome to El-Halaqa File Storage System!");
+});
+app.get("/std_list", (req, res) => {
+  try {
+    const stdList = generateStdList();
+    res.send(stdList);
+  } catch (error) {
+    res.status(500).send("Error generating student list: " + error.message);
+  }
+});
+
+app.post("/take_attendance", (req, res) => {
+  const { std_names_list } = req.body;
+  try {
+    FileStorageSystemController.take_attendance(std_names_list);
+    res.send("Attendance taken successfully.");
+  } catch (error) {
+    res.status(500).send("Error taking attendance: " + error.message);
+  }
+});
+
+app.post("/create_teacher", (req, res) => {
+  const { userName, password, type } = req.body;
+  try {
+    const teacherId = FileStorageSystemController.create_teacher({
+      userName,
+      password,
+      type,
+    });
+    res.send({ teacherId });
+  } catch (error) {
+    console.log(error.stack);
+    console.log(error.name);
+    console.log(error.message);
+    res.status(500).send("Error creating teacher: " + error.message);
+  }
+});
+
+app.get("/get_teacher", (req, res) => {
+  const { id, userName } = req.query;
+  try {
+    const teacher = FileStorageSystemController.get_teacher({ id, userName });
+    res.send(teacher);
+  } catch (error) {
+    res.status(500).send("Error getting teacher: " + error.message);
+  }
+});
+
+app.post("/create_student", (req, res) => {
+  const { name_eng, name_arb, bDate, logs, school, overAllMem, newMem } =
+    req.body;
+  try {
+    const studentId = FileStorageSystemController.create_student({
+      name_eng,
+      name_arb,
+      bDate,
+      logs,
+      school,
+      overAllMem,
+      newMem,
+    });
+    res.send({ studentId });
+  } catch (error) {
+    res.status(500).send("Error creating student: " + error.message);
+  }
+});
+app.get("/get_student", (req, res) => {
+  const { id } = req.query;
+  try {
+    const student = FileStorageSystemController.get_student(id);
+    res.send(student);
+  } catch (error) {
+    res.status(500).send("Error getting student: " + error.message);
+  }
+});
+app.post("/authenticate_teacher", (req, res) => {
+  const { userName, password } = req.body;
+  try {
+    const isAuthenticated = FileStorageSystemController.authenticate_teacher({
+      userName,
+      password,
+    });
+    res.send({ isAuthenticated });
+  } catch (error) {
+    res.status(500).send("Error authenticating teacher: " + error.message);
+  }
+});
+app.post("/add_log_to_student", (req, res) => {
+  const { studentId, log } = req.body;
+  if (!studentId || !log) {
+    return res.status(400).send("Must provide studentId and log.");
+  }
+  try {
+    FileStorageSystemController.add_log_to_student(studentId, log);
+    res.send("Log added to student successfully.");
+  } catch (error) {
+    res.status(500).send("Error adding log to student: " + error.message);
+  }
+});
+
+app.get("/get_logs", (req, res) => {
+  const { studentId, date } = req.query;
+  if (!studentId) {
+    return res.status(400).send("Must provide studentId.");
+  }
+  try {
+    const logs = FileStorageSystemController.get_logs(studentId, date);
+    res.send(logs);
+  } catch (error) {
+    res.status(500).send("Error getting logs: " + error.message);
+  }
+});
+
+app.listen(port, () => {
+  console.log(
+    `Server is running on http://localhost:${port}, with routes:\n${routes.join(
+      "\n"
+    )}`
+  );
+});
+
+
+-- take_attendance(std_names_list);
+    std_names_list: a list of student names
+    desc: takes a list of student names and adds them to database as attended
+    ret: None
+
+-- generateStdList():
+    desc: takes no parameters and can be used to get list of all students in the system
+list is in this format: cc95b4d4-0e26-4ce3-8578-585b90f218d3 - جون دو - John Doe
+id - name_arabic - name_english
+
+-- create_teacher(object);
+    object = { userName, passwordHashed, type }
+    desc: gets these parameters and returns a new object of user, type is one of those ["admin", "Mem", "Rev"]
+user structure {"id": uuid, "userName": "userName", "password": "passwordHashed", "type": "type => ["admin", "Mem", "Rev"]"}
+example:
+{
+  "5c172cd1-0a94-4551-ba06-bfc4416bfd4f": {
+    "userName": "mario",
+    "password": "$2b$10$MYNoemoax8d/EeuzGxx4Pegn.Doq9RcbVQbGOtaIFfe2AXgW3TNk6",
+    "type": "Mem",
+    "id": "5c172cd1-0a94-4551-ba06-bfc4416bfd4f"
+  }
+}
+
+-- get_teacher(object);
+    object = { id, userName }
+    desc: gets user, you can provide either id or userName, in case of both, Id will be used
+    ret:
+{
+  id: '5c172cd1-0a94-4551-ba06-bfc4416bfd4f',
+  userName: 'mario',
+  password: '$2b$10$MYNoemoax8d/EeuzGxx4Pegn.Doq9RcbVQbGOtaIFfe2AXgW3TNk6',
+  type: 'Mem'
+}
+
+-- authenticate_teacher(object);
+    object = { userName, password }
+    desc: gives true if userName and password are valid, false otherwise
+
+-- create_student(object);
+    object { name_eng, name_arb, bDate, logs, school, overAllMem, newMem }
+    desc: creates a student object
+    ret:
+    {
+      id,
+      name_eng,
+      name_arb,
+      bDate,
+      logs,
+      school,
+      overAllMem,
+      newMem,
+    };
+
+-- get_student(id);
+    desc: gets a student using their Id
+    ret:
+    {
+  "name_eng": "John Doe",
+  "name_arb": "جون دو",
+  "bDate": "2000-01-01",
+  "logs": {
+    "6504109e-4575-4df9-993d-8e191eafac50@1755093283617": {
+      "teacherId": "633eea19-bbce-42ae-98ac-7da18b418e48",
+      "memDone": "true",
+      "memGrade": "10/10",
+      "revDone": "false",
+      "revGrade": "none",
+      "time": 1755093283615,
+      "notes": "notes"
+    },
+    "f1eafec3-112f-406a-95d7-862d37737ade@1755093283854": {
+      "teacherId": "ff6a8131-3f90-456e-bbc9-537f99cafd59",
+      "memDone": "true",
+      "memGrade": "10/10",
+      "revDone": "false",
+      "revGrade": "none",
+      "time": 1755093283852,
+      "notes": "notes"
+    },
+    "3924d282-a6f4-4004-a507-5028bbb2b412@1755093299694": {
+      "teacherId": "2766f91e-11c9-4364-bf9f-ed3024bccddc",
+      "memDone": "true",
+      "memGrade": "10/10",
+      "revDone": "false",
+      "revGrade": "0/10",
+      "time": 1755093299692,
+      "notes": "notes"
+    }
+  },
+  "school": "Example School",
+  "overAllMem": 100,
+  "newMem": 10
+}
+
+-- add_log_to_student(studentId, object);
+    object = { teacherId, memDone, memGrade, revDone, revGrade, time, notes }
+    desc: adds log to student
+    log is in this format:
+    {
+  "name_eng": "John Doe",
+  "name_arb": "جون دو",
+  "bDate": "2000-01-01",
+  "logs": {
+    "6504109e-4575-4df9-993d-8e191eafac50@1755093283617": {
+      "teacherId": "633eea19-bbce-42ae-98ac-7da18b418e48",
+      "memDone": "true",
+      "memGrade": "10/10",
+      "revDone": "false",
+      "revGrade": "none",
+      "time": 1755093283615,
+      "notes": "notes"
+    },
+    "f1eafec3-112f-406a-95d7-862d37737ade@1755093283854": {
+      "teacherId": "ff6a8131-3f90-456e-bbc9-537f99cafd59",
+      "memDone": "true",
+      "memGrade": "10/10",
+      "revDone": "false",
+      "revGrade": "none",
+      "time": 1755093283852,
+      "notes": "notes"
+    },
+    "3924d282-a6f4-4004-a507-5028bbb2b412@1755093299694": {
+      "teacherId": "2766f91e-11c9-4364-bf9f-ed3024bccddc",
+      "memDone": "true",
+      "memGrade": "10/10",
+      "revDone": "false",
+      "revGrade": "0/10",
+      "time": 1755093299692,
+      "notes": "notes"
+    }
+  },
+  "school": "Example School",
+  "overAllMem": 100,
+  "newMem": 10
+}
+    ret: None
+
+
+
+
+Requirements:
+    - Assign Roles for teachers
+    - add users
+    - attendance
+    - add data to students
+    - student summary
+    - grading system
+    - arabic
+    - gathering points for the session after period
+Users' Roles:
+    Admin:
+        - attendance
+        - assign teachers' roles
+        - add students to groups
+        - assign groups of students to teachers
+        - starting and ending session
+    Mem (Memorizer):
+        - Assign page to memorize to students
+        - grade memorization
+        - status of student (done memorization)
+    Rev (revisor):
+        - assign interval to be revised to students
+        - grade revisions
+        - status of student (done revision)
