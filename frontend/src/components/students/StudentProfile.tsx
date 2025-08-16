@@ -3,6 +3,8 @@ import { Card, CardHeader, CardTitle, CardContent } from "../ui/card";
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
 import { Progress } from "../ui/progress";
+import { Input } from "../ui/input";
+import { Label } from "../ui/label";
 import { apiService } from "../../services/api";
 import { Student, StudentLog } from "../../types/auth";
 import { useToast } from "../../hooks/use-toast";
@@ -14,31 +16,27 @@ import {
   Star,
   Clock,
   FileText,
+  Filter,
+  ChevronDown,
+  ChevronUp,
 } from "lucide-react";
 
 interface StudentProfileProps {
   studentId: string;
-  onClose?: () => void;
 }
 
-const StudentProfile: React.FC<StudentProfileProps> = ({
-  studentId,
-  onClose,
-}) => {
+const StudentProfile: React.FC<StudentProfileProps> = ({ studentId }) => {
   const [student, setStudent] = useState<Student | null>(null);
   const [logs, setLogs] = useState<Record<string, StudentLog>>({});
   const [loading, setLoading] = useState(true);
+  const [selectedDate, setSelectedDate] = useState<string>("");
+  const [showAllLogs, setShowAllLogs] = useState(false);
+  const [isLoadingLogs, setIsLoadingLogs] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
     loadStudentData();
   }, [studentId]);
-
-  const handleClose = () => {
-    if (onClose) {
-      onClose();
-    }
-  };
 
   const loadStudentData = async () => {
     try {
@@ -54,6 +52,36 @@ const StudentProfile: React.FC<StudentProfileProps> = ({
       });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadLogsByDate = async (date: string) => {
+    if (!studentId) return;
+
+    try {
+      setIsLoadingLogs(true);
+      const filteredLogs = await apiService.getLogs(studentId, date);
+      setLogs(filteredLogs);
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "خطأ في تحميل السجلات",
+        description: "تعذر تحميل سجلات التاريخ المحدد",
+      });
+    } finally {
+      setIsLoadingLogs(false);
+    }
+  };
+
+  const handleDateChange = (date: string) => {
+    setSelectedDate(date);
+    if (date) {
+      loadLogsByDate(date);
+    } else {
+      // Load all logs (from student data)
+      if (student) {
+        setLogs(student.logs || {});
+      }
     }
   };
 
@@ -78,10 +106,11 @@ const StudentProfile: React.FC<StudentProfileProps> = ({
   }
 
   const logsArray = Object.entries(logs).map(([id, log]) => ({ id, ...log }));
-  const recentLogs = logsArray
-    // .sort((a, b) => Date(b.time) - a.time)
-    .sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime())
-    .slice(0, 5);
+  // const sortedLogs = logsArray.sort((a, b) => b.time - a.time);
+  const sortedLogs = logsArray.sort(
+    (a, b) => new Date(b.time).getTime() - new Date(a.time).getTime()
+  );
+  const displayedLogs = showAllLogs ? sortedLogs : sortedLogs.slice(0, 5);
 
   const completedMem = logsArray.filter((log) => log.memDone === "true").length;
   const completedRev = logsArray.filter((log) => log.revDone === "true").length;
@@ -94,20 +123,6 @@ const StudentProfile: React.FC<StudentProfileProps> = ({
       <Card className="shadow-card border-primary/20">
         <CardContent className="p-6">
           <div className="flex items-start gap-6">
-            <div className="flex flex-col justify-between">
-              <Button
-                variant="outline"
-                className="text-primary"
-                onClick={() => {
-                  console.log(`Viewing profile for ${student.id}`);
-                  handleClose; // return (
-                  //   <StudentProfile studentId={student.id} />
-                  // );
-                }}
-              >
-                عرض التفاصيل
-              </Button>
-            </div>
             <div className="p-4 gradient-primary rounded-full shadow-glow">
               <User className="h-8 w-8 text-white" />
             </div>
@@ -201,24 +216,60 @@ const StudentProfile: React.FC<StudentProfileProps> = ({
         </Card>
       </div>
 
-      {/* Recent Logs */}
+      {/* Logs Section */}
       <Card className="shadow-card">
         <CardHeader>
-          <CardTitle className="font-arabic text-primary">
-            السجلات الحديثة
-          </CardTitle>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <CardTitle className="font-arabic text-primary">
+              سجلات الطالب
+            </CardTitle>
+            <div className="flex flex-col sm:flex-row gap-2">
+              <div className="flex items-center gap-2">
+                <Filter className="h-4 w-4 text-muted-foreground" />
+                <Label htmlFor="date-filter" className="text-sm">
+                  تصفية بالتاريخ:
+                </Label>
+                <Input
+                  id="date-filter"
+                  type="date"
+                  value={selectedDate}
+                  onChange={(e) => handleDateChange(e.target.value)}
+                  className="w-auto"
+                />
+                {selectedDate && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => handleDateChange("")}
+                    className="text-xs"
+                  >
+                    إلغاء التصفية
+                  </Button>
+                )}
+              </div>
+            </div>
+          </div>
         </CardHeader>
         <CardContent>
-          {recentLogs.length === 0 ? (
+          {isLoadingLogs ? (
+            <div className="flex items-center justify-center py-8">
+              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
+              <span className="mr-2 text-muted-foreground">
+                جارٍ تحميل السجلات...
+              </span>
+            </div>
+          ) : displayedLogs.length === 0 ? (
             <div className="text-center py-8">
               <FileText className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
               <p className="text-muted-foreground font-arabic">
-                لا توجد سجلات متاحة
+                {selectedDate
+                  ? "لا توجد سجلات لهذا التاريخ"
+                  : "لا توجد سجلات متاحة"}
               </p>
             </div>
           ) : (
             <div className="space-y-4">
-              {recentLogs.map((log) => (
+              {displayedLogs.map((log) => (
                 <Card key={log.id} className="border-primary/10">
                   <CardContent className="p-4">
                     <div className="flex items-start justify-between">
@@ -232,32 +283,29 @@ const StudentProfile: React.FC<StudentProfileProps> = ({
                         </div>
 
                         <div className="flex flex-wrap gap-2 mb-2">
-                          <Badge
-                            variant={
-                              log.memDone === "true" ? "default" : "secondary"
-                            }
-                          >
-                            حفظ:{" "}
-                            {log.memDone === "true" ? "مكتمل" : "غير مكتمل"}
-                          </Badge>
+                          {log.memDone && (
+                            <Badge variant={"secondary"}>
+                              حفظ: {log.memDone}
+                            </Badge>
+                          )}
                           {log.memGrade && (
                             <Badge variant="outline">
                               درجة الحفظ: {log.memGrade}
                             </Badge>
                           )}
-                          <Badge
-                            variant={
-                              log.revDone === "true" ? "default" : "secondary"
-                            }
-                          >
-                            مراجعة:{" "}
-                            {log.revDone === "true" ? "مكتمل" : "غير مكتمل"}
-                          </Badge>
-                          {log.revGrade && log.revGrade !== "none" && (
+                          {log.revDone && (
+                            <Badge variant={"secondary"}>
+                              مراجعة: {log.revDone}
+                            </Badge>
+                          )}
+                          {log.revGrade && (
                             <Badge variant="outline">
                               درجة المراجعة: {log.revGrade}
                             </Badge>
                           )}
+                          <Badge variant="secondary">
+                            معلم: {log.teacherUserName}
+                          </Badge>
                         </div>
 
                         {log.notes && (
@@ -270,6 +318,28 @@ const StudentProfile: React.FC<StudentProfileProps> = ({
                   </CardContent>
                 </Card>
               ))}
+
+              {!selectedDate && sortedLogs.length > 5 && (
+                <div className="text-center pt-4">
+                  <Button
+                    variant="outline"
+                    onClick={() => setShowAllLogs(!showAllLogs)}
+                    className="gap-2"
+                  >
+                    {showAllLogs ? (
+                      <>
+                        <ChevronUp className="h-4 w-4" />
+                        إخفاء السجلات
+                      </>
+                    ) : (
+                      <>
+                        <ChevronDown className="h-4 w-4" />
+                        عرض جميع السجلات ({sortedLogs.length})
+                      </>
+                    )}
+                  </Button>
+                </div>
+              )}
             </div>
           )}
         </CardContent>

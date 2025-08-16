@@ -1,3 +1,4 @@
+import { User } from "./user.js";
 import { v4 as uuidv4 } from "uuid";
 import fs from "fs";
 import os from "os";
@@ -125,21 +126,26 @@ export class Student {
       time,
       notes,
     });
-    if (!(teacherId && memDone && memGrade && revGrade && time)) {
+    if (!(teacherId && time)) {
       throw new Error(
-        "Invalid log parameters. Must provide teacherId, memDone, memGrade, revGrade, and time."
+        "Invalid log parameters. Must provide teacherId, and time."
       );
     }
     if (!fs.existsSync(this.#directory)) {
       fs.mkdirSync(this.#directory, { recursive: true });
     }
     const studentData = JSON.parse(fs.readFileSync(this.#filePath, "utf8"));
+    const teacher = User.getUser({ id: teacherId });
+    const teacherUserName = teacher.userName;
+    // console.log("Teacher:", teacher);
+    // console.log("Teacher username:", teacherUserName);
     studentData.logs[`${uuidv4()}@${new Date().toISOString().split("T")[0]}`] =
       {
         teacherId: teacherId,
+        teacherUserName: teacherUserName,
         memDone: memDone,
         memGrade: memGrade,
-        revDone: revGrade !== "false" ? "-1/10" : revDone,
+        revDone: revDone,
         revGrade: revGrade,
         time: time,
         notes: notes || "null",

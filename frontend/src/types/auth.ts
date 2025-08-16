@@ -17,10 +17,11 @@ export interface Student {
 
 export interface StudentLog {
   teacherId: string;
-  memDone: string;
-  memGrade: string;
-  revDone: string;
-  revGrade: string;
+  teacherUserName: string;
+  memDone?: string;
+  memGrade?: string;
+  revDone?: string;
+  revGrade?: string;
   time: string;
   notes: string;
 }

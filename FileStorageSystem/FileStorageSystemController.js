@@ -123,11 +123,11 @@ export class FileStorageSystemController {
       object;
     if (
       !studentId ||
-      !teacherId ||
-      memDone === undefined ||
-      memGrade === undefined ||
-      revDone === undefined ||
-      revGrade === undefined
+      !teacherId
+      // memDone === undefined ||
+      // memGrade === undefined ||
+      // revDone === undefined ||
+      // revGrade === undefined
       // !time
     ) {
       throw new Error(
