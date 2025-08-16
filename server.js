@@ -1,35 +1,59 @@
+// import { generateStdList } from "./FileStorageSystem/std_list.js";
+// import { FileStorageSystemController } from "./FileStorageSystem/FileStorageSystemController.js";
+// import express from "express";
+// // import router from "./server/routes/index.js";
+// import cors from "cors";
+
+// const app = express();
+// const port = 3000;
+// const routes = [
+//   "/ => get",
+//   "/std_list => get",
+//   "/take_attendance => post",
+//   "/create_teacher => post",
+//   "/get_teacher => get",
+//   "/create_student => post",
+//   "/get_student => get",
+//   "/authenticate_teacher => post",
+//   "/add_log_to_student => post",
+//   "/get_logs => get",
+// ];
+
+// //enable cors
+// app.use(cors());
+
+// // app.use(app.json());
+// app.use(express.json());
+// // app.use(app.urlencoded({ extended: true }));
+// app.use(express.urlencoded({ extended: true }));
+
 import { generateStdList } from "./FileStorageSystem/std_list.js";
 import { FileStorageSystemController } from "./FileStorageSystem/FileStorageSystemController.js";
 import express from "express";
-// import router from "./server/routes/index.js";
 import cors from "cors";
+import path from "path";
+import { fileURLToPath } from "url";
 
 const app = express();
 const port = 3000;
-const routes = [
-  "/ => get",
-  "/std_list => get",
-  "/take_attendance => post",
-  "/create_teacher => post",
-  "/get_teacher => get",
-  "/create_student => post",
-  "/get_student => get",
-  "/authenticate_teacher => post",
-  "/add_log_to_student => post",
-  "/get_logs => get",
-];
 
-//enable cors
+// For ES modules, we need to recreate __dirname
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Enable CORS + body parsing
 app.use(cors());
-
-// app.use(app.json());
 app.use(express.json());
-// app.use(app.urlencoded({ extended: true }));
 app.use(express.urlencoded({ extended: true }));
+
+// app.g/et("/", (req, res) => {
+//   res.send("Welcome to El-Halaqa File Storage System!");
+// });
 app.get("/", (req, res) => {
-  res.send("Welcome to El-Halaqa File Storage System!");
+  res.sendFile(path.join(__dirname, "dist", "index.html"));
 });
-app.get("/std_list", (req, res) => {
+
+app.get("/api/std_list", (req, res) => {
   try {
     const stdList = generateStdList();
     res.send(stdList);
@@ -38,7 +62,7 @@ app.get("/std_list", (req, res) => {
   }
 });
 
-app.post("/take_attendance", (req, res) => {
+app.post("/api/take_attendance", (req, res) => {
   const { std_names_list } = req.body;
   try {
     FileStorageSystemController.take_attendance(std_names_list);
@@ -48,7 +72,7 @@ app.post("/take_attendance", (req, res) => {
   }
 });
 
-app.post("/create_teacher", (req, res) => {
+app.post("/api/create_teacher", (req, res) => {
   const { userName, password, type } = req.body;
   try {
     const teacherId = FileStorageSystemController.create_teacher({
@@ -65,7 +89,7 @@ app.post("/create_teacher", (req, res) => {
   }
 });
 
-app.get("/get_teacher", (req, res) => {
+app.get("/api/get_teacher", (req, res) => {
   const { id, userName } = req.query;
   try {
     const teacher = FileStorageSystemController.get_teacher({ id, userName });
@@ -75,7 +99,7 @@ app.get("/get_teacher", (req, res) => {
   }
 });
 
-app.post("/create_student", (req, res) => {
+app.post("/api/create_student", (req, res) => {
   const { name_eng, name_arb, bDate, logs, school, overAllMem, newMem } =
     req.body;
   try {
@@ -93,7 +117,7 @@ app.post("/create_student", (req, res) => {
     res.status(500).send("Error creating student: " + error.message);
   }
 });
-app.get("/get_student", (req, res) => {
+app.get("/api/get_student", (req, res) => {
   const { id } = req.query;
   try {
     const student = FileStorageSystemController.get_student(id);
@@ -102,7 +126,7 @@ app.get("/get_student", (req, res) => {
     res.status(500).send("Error getting student: " + error.message);
   }
 });
-app.post("/authenticate_teacher", (req, res) => {
+app.post("/api/authenticate_teacher", (req, res) => {
   const { userName, password } = req.body;
   try {
     const isAuthenticated = FileStorageSystemController.authenticate_teacher({
@@ -114,7 +138,7 @@ app.post("/authenticate_teacher", (req, res) => {
     res.status(500).send("Error authenticating teacher: " + error.message);
   }
 });
-app.post("/add_log_to_student", (req, res) => {
+app.post("/api/add_log_to_student", (req, res) => {
   const { studentId, log } = req.body;
   if (!studentId || !log) {
     return res.status(400).send("Must provide studentId and log.");
@@ -127,7 +151,7 @@ app.post("/add_log_to_student", (req, res) => {
   }
 });
 
-app.get("/get_logs", (req, res) => {
+app.get("/api/get_logs", (req, res) => {
   const { studentId, date } = req.query;
   if (!studentId) {
     return res.status(400).send("Must provide studentId.");
@@ -140,10 +164,39 @@ app.get("/get_logs", (req, res) => {
   }
 });
 
-app.listen(port, () => {
-  console.log(
-    `Server is running on http://localhost:${port}, with routes:\n${routes.join(
-      "\n"
-    )}`
-  );
+// app.g/apiet("*", (req, res) => {
+//   res.sendFile(path.join(__dirname, "dist", "index.html"));
+// });
+
+// // app.listen(port, () => {
+// //   console.log(
+// //     `Server is running on http://localhost:${port}, with routes:\n${routes.join(
+// //       "\n"
+// //     )}`
+// //   );
+// // });
+
+// app.listen(port, "0.0.0.0", () => {
+//   console.log(
+//     `Server running at http://0.0.0.0:${port}, with routes:\n${routes.join(
+//       "\n"
+//     )}`
+//   );
+// });
+
+// ... (all your other API endpoints unchanged) ...
+
+// ================= FRONTEND =================
+// Serve static files from React/Vite build
+app.use(express.static(path.join(__dirname, "dist"))); // if Vite build
+// app.use(express.static(path.join(__dirname, "build"))); // if CRA build
+
+// Catch-all route: send index.html for React router
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "dist", "index.html"));
+});
+
+// ================= START SERVER =================
+app.listen(port, "0.0.0.0", () => {
+  console.log(`Server running at http://0.0.0.0:${port}`);
 });

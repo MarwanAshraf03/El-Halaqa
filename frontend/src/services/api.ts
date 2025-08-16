@@ -1,22 +1,26 @@
-import { User, Student, StudentLog } from '../types/auth';
+import { User, Student, StudentLog } from "../types/auth";
 
-const API_BASE_URL = process.env.NODE_ENV === 'production' 
-  ? 'https://your-api-domain.com' 
-  : 'http://localhost:3000';
+// const API_BASE_URL = process.env.NODE_ENV === 'production'
+//   ? 'https://your-api-domain.com'
+//   : 'http://localhost:3000';
+const API_BASE_URL = "/api";
 
 class ApiService {
-  private async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
+  private async request<T>(
+    endpoint: string,
+    options: RequestInit = {}
+  ): Promise<T> {
     const url = `${API_BASE_URL}${endpoint}`;
     const config = {
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
         ...options.headers,
       },
       ...options,
     };
 
     const response = await fetch(url, config);
-    
+
     if (!response.ok) {
       const errorText = await response.text();
       throw new Error(errorText || `HTTP error! status: ${response.status}`);
@@ -26,24 +30,34 @@ class ApiService {
   }
 
   // Authentication
-  async authenticateTeacher(userName: string, password: string): Promise<{ isAuthenticated: boolean }> {
-    return this.request('/authenticate_teacher', {
-      method: 'POST',
+  async authenticateTeacher(
+    userName: string,
+    password: string
+  ): Promise<{ isAuthenticated: boolean }> {
+    return this.request("/authenticate_teacher", {
+      method: "POST",
       body: JSON.stringify({ userName, password }),
     });
   }
 
-  async getTeacher(identifier: { id?: string; userName?: string }): Promise<User> {
+  async getTeacher(identifier: {
+    id?: string;
+    userName?: string;
+  }): Promise<User> {
     const params = new URLSearchParams();
-    if (identifier.id) params.append('id', identifier.id);
-    if (identifier.userName) params.append('userName', identifier.userName);
-    
+    if (identifier.id) params.append("id", identifier.id);
+    if (identifier.userName) params.append("userName", identifier.userName);
+
     return this.request(`/get_teacher?${params.toString()}`);
   }
 
-  async createTeacher(data: { userName: string; password: string; type: string }): Promise<{ teacherId: string }> {
-    return this.request('/create_teacher', {
-      method: 'POST',
+  async createTeacher(data: {
+    userName: string;
+    password: string;
+    type: string;
+  }): Promise<{ teacherId: string }> {
+    return this.request("/create_teacher", {
+      method: "POST",
       body: JSON.stringify(data),
     });
   }
@@ -67,8 +81,8 @@ class ApiService {
     overAllMem: number;
     newMem: number;
   }): Promise<{ studentId: string }> {
-    return this.request('/create_student', {
-      method: 'POST',
+    return this.request("/create_student", {
+      method: "POST",
       body: JSON.stringify(data),
     });
   }
@@ -76,9 +90,9 @@ class ApiService {
   // Logs and Attendance
   async takeAttendance(std_names_list: string[]): Promise<string> {
     const response = await fetch(`${API_BASE_URL}/take_attendance`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({ std_names_list }),
     });
@@ -87,19 +101,22 @@ class ApiService {
 
   async addLogToStudent(studentId: string, log: StudentLog): Promise<string> {
     const response = await fetch(`${API_BASE_URL}/add_log_to_student`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({ studentId, log }),
     });
     return response.text();
   }
 
-  async getLogs(studentId: string, date?: string): Promise<Record<string, StudentLog>> {
+  async getLogs(
+    studentId: string,
+    date?: string
+  ): Promise<Record<string, StudentLog>> {
     const params = new URLSearchParams({ studentId });
-    if (date) params.append('date', date);
-    
+    if (date) params.append("date", date);
+
     return this.request(`/get_logs?${params.toString()}`);
   }
 }
