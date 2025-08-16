@@ -1,5 +1,6 @@
 // import bcrypt
-import bcrypt from "bcrypt";
+// import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import { User } from "./user.js";
 export class Security {
   static authenticate(userName, password) {
