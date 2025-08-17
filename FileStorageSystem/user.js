@@ -129,8 +129,10 @@ export class User {
       throw new Error("User already exists.");
     }
     console.log("the type provided is ", type);
-    if (["admin", "Mem", "Rev"].indexOf(type) === -1) {
-      throw new Error("Invalid user type. Must be one of: admin, Mem, or Rev.");
+    if (["admin", "Mem", "Rev", "Mem-Rev"].indexOf(type) === -1) {
+      throw new Error(
+        "Invalid user type. Must be one of: admin, Mem, Rev, or Mem-Rev."
+      );
     }
     const user = {
       userName: this.#userName,

@@ -35,6 +35,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 
 const app = express();
+// const port = 3000;
 const port = 3000;
 
 // For ES modules, we need to recreate __dirname
@@ -197,6 +198,11 @@ app.get("*", (req, res) => {
 });
 
 // ================= START SERVER =================
+
 app.listen(port, "0.0.0.0", () => {
   console.log(`Server running at http://0.0.0.0:${port}`);
 });
+
+// app.listen(port, () => {
+//   console.log(`Server is running on http://localhost:${port}`);
+// });
