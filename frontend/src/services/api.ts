@@ -1,8 +1,9 @@
 import { User, Student, StudentLog } from "../types/auth";
 
-// const API_BASE_URL = process.env.NODE_ENV === 'production'
-//   ? 'https://your-api-domain.com'
-//   : 'http://localhost:3000';
+// const API_BASE_URL =
+//   process.env.NODE_ENV === "production"
+//     ? "https://your-api-domain.com"
+//     : "http://localhost:3000/api";
 const API_BASE_URL = "/api";
 
 class ApiService {
@@ -78,8 +79,8 @@ class ApiService {
     bDate: string;
     logs: Record<string, StudentLog>;
     school: string;
-    overAllMem: number;
-    newMem: number;
+    overAllMem: string;
+    newMem: string;
   }): Promise<{ studentId: string }> {
     return this.request("/create_student", {
       method: "POST",

@@ -1,7 +1,7 @@
 export interface User {
   id: string;
   userName: string;
-  type: "admin" | "Mem" | "Rev";
+  type: "admin" | "Mem" | "Rev" | "Mem-Rev";
 }
 
 export interface Student {
@@ -11,8 +11,8 @@ export interface Student {
   bDate: string;
   logs: Record<string, StudentLog>;
   school: string;
-  overAllMem: number;
-  newMem: number;
+  overAllMem: string;
+  newMem: string;
 }
 
 export interface StudentLog {

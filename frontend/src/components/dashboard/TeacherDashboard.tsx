@@ -32,7 +32,7 @@ import {
   Edit,
   UserCheck,
 } from "lucide-react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@radix-ui/react-tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import StudentProfile from "../students/StudentProfile";
 
 const TeacherDashboard: React.FC = () => {
@@ -153,6 +153,13 @@ const TeacherDashboard: React.FC = () => {
         canGradeMem: false,
         canGradeRev: true,
       };
+    } else if (user?.type === "Mem-Rev") {
+      return {
+        title: "معلم التحفيظ والمراجعة",
+        description: "إدارة الحفظ والمراجعة وتقييم الطلاب",
+        canGradeMem: true,
+        canGradeRev: true,
+      };
     }
     return {
       title: "معلم",
@@ -191,7 +198,6 @@ const TeacherDashboard: React.FC = () => {
       <Tabs defaultValue="students" className="space-y-4">
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="students" className="gap-2">
-            <Users className="h-4 w-4" />
             الطلاب
           </TabsTrigger>
           <TabsTrigger value="studentProfile" className="gap-2">

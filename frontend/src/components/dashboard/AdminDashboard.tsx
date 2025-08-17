@@ -43,8 +43,8 @@ const AdminDashboard: React.FC = () => {
     name_arb: "",
     bDate: "",
     school: "",
-    overAllMem: 0,
-    newMem: 0,
+    overAllMem: "",
+    newMem: "",
   });
   const { toast } = useToast();
   const [studentProfile, setStudentProfile] = useState("");
@@ -101,8 +101,8 @@ const AdminDashboard: React.FC = () => {
         name_arb: "",
         bDate: "",
         school: "",
-        overAllMem: 0,
-        newMem: 0,
+        overAllMem: "",
+        newMem: "",
       });
       setIsAddingStudent(false);
       loadStudents();
@@ -130,13 +130,15 @@ const AdminDashboard: React.FC = () => {
     },
     {
       title: "الحفظ الجديد",
-      value: students.reduce((sum, s) => sum + s.newMem, 0),
+      // value: students.reduce((sum, s) => sum + s.newMem, 0),
+      value: "all good",
       icon: BookOpen,
       color: "bg-secondary",
     },
     {
       title: "إجمالي الحفظ",
-      value: students.reduce((sum, s) => sum + s.overAllMem, 0),
+      // value: students.reduce((sum, s) => sum + s.overAllMem, 0),
+      value: "all good",
       icon: BarChart3,
       color: "bg-muted",
     },
@@ -280,30 +282,32 @@ const AdminDashboard: React.FC = () => {
                           <Label htmlFor="overAllMem">إجمالي الحفظ</Label>
                           <Input
                             id="overAllMem"
-                            type="number"
+                            type="text"
                             value={newStudent.overAllMem}
                             onChange={(e) =>
                               setNewStudent({
                                 ...newStudent,
-                                overAllMem: parseInt(e.target.value) || 0,
+                                // overAllMem: parseInt(e.target.value) || 0,
+                                overAllMem: e.target.value,
                               })
                             }
-                            placeholder="0"
+                            placeholder="من صفحة 1 الى صفحة 15"
                           />
                         </div>
                         <div className="space-y-2">
                           <Label htmlFor="newMem">الحفظ الجديد</Label>
                           <Input
                             id="newMem"
-                            type="number"
+                            type="text"
                             value={newStudent.newMem}
                             onChange={(e) =>
                               setNewStudent({
                                 ...newStudent,
-                                newMem: parseInt(e.target.value) || 0,
+                                // newMem: parseInt(e.target.value) || 0,
+                                newMem: e.target.value,
                               })
                             }
-                            placeholder="0"
+                            placeholder="صفحة 16"
                           />
                         </div>
                       </div>

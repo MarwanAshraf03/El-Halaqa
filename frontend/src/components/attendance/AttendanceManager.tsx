@@ -76,7 +76,8 @@ const AttendanceManager: React.FC<AttendanceManagerProps> = ({
   };
 
   const selectAll = () => {
-    const allNames = students.map((s) => s.name_arb);
+    // const allNames = students.map((s) => s.name_arb);
+    const allNames = students.map((s) => s.id);
     setSelectedStudents(new Set(allNames));
   };
 
@@ -96,7 +97,13 @@ const AttendanceManager: React.FC<AttendanceManagerProps> = ({
 
     try {
       setSubmitting(true);
-      const attendanceList = Array.from(selectedStudents);
+      const stdNames = [];
+      selectedStudents.forEach((id) => {
+        const student = students.find((s) => s.id === id);
+        stdNames.push(student.name_arb);
+      });
+      // const attendanceList = Array.from(selectedStudents);
+      const attendanceList = Array.from(stdNames);
       await apiService.takeAttendance(attendanceList);
 
       toast({
@@ -239,7 +246,8 @@ const AttendanceManager: React.FC<AttendanceManagerProps> = ({
                       {student.name_eng}
                     </p>
                   </div>
-                  {selectedStudents.has(student.name_arb) && (
+                  {/* {selectedStudents.has(student.name_arb) && ( */}
+                  {selectedStudents.has(student.id) && (
                     <CheckCircle2 className="h-4 w-4 text-primary" />
                   )}
                 </div>
