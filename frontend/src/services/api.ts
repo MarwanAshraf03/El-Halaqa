@@ -1,10 +1,10 @@
 import { User, Student, StudentLog } from "../types/auth";
 
-const API_BASE_URL =
-  process.env.NODE_ENV === "production"
-    ? "https://your-api-domain.com"
-    : "http://localhost:3000/api";
-// const API_BASE_URL = "/api";
+// const API_BASE_URL =
+//   process.env.NODE_ENV === "production"
+//     ? "https://your-api-domain.com"
+//     : "http://localhost:3000/api";
+const API_BASE_URL = "/api";
 
 class ApiService {
   private async request<T>(
