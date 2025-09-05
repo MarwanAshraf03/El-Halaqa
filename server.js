@@ -96,9 +96,9 @@ app.post("/api/create_teacher", (req, res) => {
     });
     res.send({ teacherId });
   } catch (error) {
-    console.log(error.stack);
-    console.log(error.name);
-    console.log(error.message);
+    // console.log(error.stack);
+    // console.log(error.name);
+    // console.log(error.message);
     res.status(500).send("Error creating teacher: " + error.message);
   }
 });

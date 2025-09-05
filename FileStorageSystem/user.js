@@ -18,12 +18,12 @@ export class User {
   //   constructor({ id, userName, passwordHashed, type }) {
   constructor(object) {
     const { id, userName, passwordHashed, type } = object;
-    console.log("User constructor called with parameters:", {
-      id,
-      userName,
-      passwordHashed,
-      type,
-    });
+    // console.log("User constructor called with parameters:", {
+    //   id,
+    //   userName,
+    //   passwordHashed,
+    //   type,
+    // });
     this.#id = id;
     // Ensure the directory exists before writing
     if (!fs.existsSync(this.#directory)) {
@@ -34,7 +34,7 @@ export class User {
       fs.writeFileSync(this.#filePath, JSON.stringify({}), "utf8");
     }
     if (id) {
-      console.log("inside id condition");
+      // console.log("inside id condition");
       // Load user info if id is provided
       const users = JSON.parse(fs.readFileSync(this.#filePath, "utf8"));
       if (users[id]) {
@@ -66,7 +66,7 @@ export class User {
 
   static getUser(object) {
     const { id, userName } = object;
-    console.log("getUser called with parameters:", { id, userName });
+    // console.log("getUser called with parameters:", { id, userName });
     const directory = path.join(
       os.homedir(),
       "/storage/documents/El-Halaqa/users"
@@ -126,11 +126,11 @@ export class User {
   }
 
   saveUser(type) {
-    console.log("saveUser called");
+    // console.log("saveUser called");
     if (this.#id) {
       throw new Error("User already exists.");
     }
-    console.log("the type provided is ", type);
+    // console.log("the type provided is ", type);
     if (["admin", "Mem", "Rev", "Mem-Rev"].indexOf(type) === -1) {
       throw new Error(
         "Invalid user type. Must be one of: admin, Mem, Rev, or Mem-Rev."

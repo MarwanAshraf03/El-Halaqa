@@ -140,15 +140,15 @@ class ApiService {
       },
       body: JSON.stringify({ studentId, logId }),
     });
-    console.log("Response:", response);
-    console.log("Response json:", response.json());
+    // console.log("Response:", response);
+    // console.log("Response json:", response.json());
 
     if (!response.ok) {
       console.log("Error response:", response);
       const errorText = await response.text();
       throw new Error(errorText || `HTTP error! status: ${response.status}`);
     }
-    console.log("line 151");
+    // console.log("line 151");
     return true;
   }
 }

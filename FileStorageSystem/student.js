@@ -126,17 +126,17 @@ export class Student {
       time,
       notes,
     } = log;
-    console.log("save_logs called with parameters:", {
-      teacherId,
-      memDone,
-      memGrade,
-      newMem,
-      revDone,
-      revGrade,
-      overAllMem,
-      time,
-      notes,
-    });
+    // console.log("save_logs called with parameters:", {
+    //   teacherId,
+    //   memDone,
+    //   memGrade,
+    //   newMem,
+    //   revDone,
+    //   revGrade,
+    //   overAllMem,
+    //   time,
+    //   notes,
+    // });
     if (!(teacherId && time)) {
       throw new Error(
         "Invalid log parameters. Must provide teacherId, and time."
@@ -163,10 +163,10 @@ export class Student {
       };
     this.#logs = studentData.logs;
     if (overAllMem || newMem) {
-      console.log("Updating overAllMem and newMem:", {
-        overAllMem,
-        newMem,
-      });
+      // console.log("Updating overAllMem and newMem:", {
+      //   overAllMem,
+      //   newMem,
+      // });
       studentData.overAllMem = overAllMem ? overAllMem : studentData.overAllMem;
       this.#overAllMem = overAllMem ? overAllMem : studentData.overAllMem;
       studentData.newMem = newMem ? newMem : studentData.newMem;
@@ -194,10 +194,10 @@ export class Student {
       throw new Error(`Student with id ${this.#id} does not exist.`);
     }
     const studentData = JSON.parse(fs.readFileSync(this.#filePath, "utf8"));
-    console.log("Current logs:", studentData.logs);
-    console.log("Log ID to delete:", logId);
-    console.log("log ids:", Object.keys(studentData.logs));
-    console.log("log exists:", Object.keys(studentData.logs).includes(logId));
+    // console.log("Current logs:", studentData.logs);
+    // console.log("Log ID to delete:", logId);
+    // console.log("log ids:", Object.keys(studentData.logs));
+    // console.log("log exists:", Object.keys(studentData.logs).includes(logId));
     if (!Object.keys(studentData.logs).includes(logId)) {
       throw new Error(`Log with id ${logId} does not exist.`);
     }

@@ -84,7 +84,7 @@ const AttendanceManager: React.FC<AttendanceManagerProps> = ({
     } else {
       newSelected.add(studentName);
     }
-    console.log("Selected Students:", newSelected);
+    // console.log("Selected Students:", newSelected);
     setSelectedStudents(newSelected);
   };
 

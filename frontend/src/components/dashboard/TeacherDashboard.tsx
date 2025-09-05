@@ -253,9 +253,9 @@ const TeacherDashboard: React.FC = () => {
                                 variant="outline"
                                 className="text-primary"
                                 onClick={() => {
-                                  console.log(
-                                    `Viewing profile for ${student.id}`
-                                  );
+                                  // console.log(
+                                  //   `Viewing profile for ${student.id}`
+                                  // );
                                   // setStudentProfile((id) => !prev); // toggle
                                   setStudentProfile(student.id);
                                   // return (

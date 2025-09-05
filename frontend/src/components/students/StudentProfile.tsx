@@ -94,9 +94,9 @@ const StudentProfile: React.FC<StudentProfileProps> = ({
     if (!studentId || !logId) return;
 
     try {
-      console.log("before deletion");
+      // console.log("before deletion");
       await apiService.deleteLog(studentId, logId);
-      console.log("after deletion");
+      // console.log("after deletion");
       toast({
         variant: "default",
         title: "تم الحذف بنجاح",

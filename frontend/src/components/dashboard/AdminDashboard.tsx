@@ -372,9 +372,9 @@ const AdminDashboard: React.FC = () => {
                                 variant="outline"
                                 className="text-primary"
                                 onClick={() => {
-                                  console.log(
-                                    `Viewing profile for ${student.id}`
-                                  );
+                                  // console.log(
+                                  //   `Viewing profile for ${student.id}`
+                                  // );
                                   setStudentProfile(student.id);
                                   // on click change the tab from students to studentProfile
                                   // This will be handled by the parent component

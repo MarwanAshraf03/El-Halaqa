@@ -39,7 +39,7 @@ export class FileStorageSystemController {
   static create_teacher(object) {
     const { userName, password, type } = object;
     if (!userName || !password || !type) {
-      console.log("inside create teacher of file storage system controller");
+      // console.log("inside create teacher of file storage system controller");
       throw new Error(
         "Invalid parameters. Must provide userName, password, and type."
       );
@@ -206,92 +206,3 @@ export class FileStorageSystemController {
     const { id, name, students } = object;
   }
 }
-// const AttendanceSystem = new Attendance("2023-10-01");
-// AttendanceSystem.save_attendance(["مروان", "احمد", "سمير"]);
-// console.log("Attendance saved successfully.");
-// try {
-//   console.log(
-//     "Attendance records for 2023-10-01:",
-//     AttendanceSystem.get_attendance("2023-10-01")
-//   );
-// } catch (error) {
-//   console.error("Error retrieving attendance records:", error.message);
-// }
-// let user;
-// try {
-//   user = new User({
-//     userName: "mohame",
-//     passwordHashed: bcrypt.hashSync("password1233", 10),
-//     type: "Mem",
-//   });
-// } catch (error) {
-//   console.error("Error creating user:", error.message);
-// }
-// // const user = new User({ id: "bbb81271-7b9d-49ef-9451-78e3638f9897" });
-// if (user) {
-//   console.log("User created successfully:", user.getUserInfo());
-//   try {
-//     const retrievedUser = User.getUser({ userName: "mohamedd" });
-//     console.log("Retrieved user:", retrievedUser);
-//   } catch (error) {
-//     console.error("Error retrieving user:", error.message);
-//   }
-//   const isAuthenticated = Security.authenticate("mohamedd", "password123");
-//   console.log(
-//     "User authentication status:",
-//     isAuthenticated ? "Authenticated" : "Not authenticated"
-//   );
-// }
-
-// const student = new Student({
-//   id: "cc95b4d4-0e26-4ce3-8578-585b90f218d3",
-//   name_eng: "John Doe",
-//   name_arb: "جون دو",
-//   bDate: "2000-01-01",
-//   logs: {},
-//   school: "Example School",
-//   overAllMem: 100,
-//   newMem: 10,
-// });
-// try {
-//   const savedStudent = student.save_student();
-//   console.log("Student saved successfully:", savedStudent);
-// } catch (error) {
-//   console.error("Error saving student:", error.message);
-// }
-// try {
-//   student.save_logs({
-//     teacherId: uuidv4(),
-//     memDone: "true",
-//     memGrade: "10/10",
-//     revDone: "false",
-//     revGrade: "0/10",
-//     time: Date.now(),
-//     notes: "notes",
-//   });
-// } catch (error) {
-//   console.error("Error saving logs:", error.message);
-// }
-
-// users = Teachers
-// create;
-// students
-// attendance
-// }
-
-// static #directory = path.join(os.homedir(), "/storage/documents/El-Halaqa");
-
-// take_attendance(std_names_list);
-// create_teacher(object);
-// get_teacher(object);
-// authenticate_teacher(object);
-// create_student(object);
-// get_student(id);
-// add_log_to_student(studentId, object);
-// const AttendanceSystem = new Attendance("2023-10-01");
-
-// // const user = new User({ id: "bbb81271-7b9d-49ef-9451-78e3638f9897" });
-//     const retrievedUser = User.getUser({ userName: "mohamedd" });
-//   const isAuthenticated = Security.authenticate("mohamedd", "password123");
-// const student = new Student({
-//   const savedStudent = student.save_student();
