@@ -23,6 +23,19 @@ export class FileStorageSystemController {
     attendance.save_attendance(std_names_list);
   }
 
+  static get_attendance(date) {
+    if (!date) {
+      throw new Error("Must provide date to get attendance.");
+    }
+    const attendance = new Attendance(date);
+    try {
+      return attendance.get_attendance(date);
+    } catch (Error) {
+      console.log("Error getting attendance: " + Error.message);
+      return null;
+    }
+  }
+
   static create_teacher(object) {
     const { userName, password, type } = object;
     if (!userName || !password || !type) {
@@ -119,8 +132,17 @@ export class FileStorageSystemController {
   }
 
   static add_log_to_student(studentId, object) {
-    const { teacherId, memDone, memGrade, revDone, revGrade, time, notes } =
-      object;
+    const {
+      teacherId,
+      memDone,
+      memGrade,
+      newMem,
+      revDone,
+      revGrade,
+      overAllMem,
+      time,
+      notes,
+    } = object;
     if (
       !studentId ||
       !teacherId
@@ -141,8 +163,10 @@ export class FileStorageSystemController {
         teacherId: teacherId,
         memDone: memDone,
         memGrade: memGrade,
+        newMem: newMem,
         revDone: revDone,
         revGrade: revGrade,
+        overAllMem: overAllMem,
         time: time || new Date().toISOString(),
         notes: notes,
       });
@@ -164,6 +188,22 @@ export class FileStorageSystemController {
       console.log("Error getting logs: " + Error.message);
       return null;
     }
+  }
+
+  static delete_log(studentId, logId) {
+    if (!studentId || !logId) {
+      throw new Error("Must provide studentId and logId to delete log.");
+    }
+    try {
+      const student = new Student({ id: studentId });
+      return student.delete_log(logId);
+    } catch (Error) {
+      console.log("Error deleting log: " + Error.message);
+      return false;
+    }
+  }
+  static add_group_to_teacher(object) {
+    const { id, name, students } = object;
   }
 }
 // const AttendanceSystem = new Attendance("2023-10-01");

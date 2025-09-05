@@ -47,8 +47,10 @@ const TeacherDashboard: React.FC = () => {
   const [newLog, setNewLog] = useState<{
     memDone?: string;
     memGrade?: string;
+    newMem?: string;
     revDone?: string;
     revGrade?: string;
+    overAllMem?: string;
     notes?: string;
   }>({
     // memDone: "false",
@@ -110,8 +112,10 @@ const TeacherDashboard: React.FC = () => {
         teacherUserName: user.userName,
         memDone: newLog.memDone,
         memGrade: newLog.memGrade,
+        newMem: newLog.newMem,
         revDone: newLog.revDone,
         revGrade: newLog.revGrade,
+        overAllMem: newLog.overAllMem,
         time: new Date().toISOString(),
         notes: newLog.notes,
       };
@@ -317,7 +321,7 @@ const TeacherDashboard: React.FC = () => {
                                         </SelectContent>
                                       </Select>
                                     </div> */}
-                                        <div className="space-y-2">
+                                        <div className="space-y-3">
                                           <Label htmlFor="memDone">
                                             تم التحفيظ
                                           </Label>
@@ -333,7 +337,7 @@ const TeacherDashboard: React.FC = () => {
                                             // placeholder="مثال: 10/10"
                                           />
                                         </div>
-                                        <div className="space-y-2">
+                                        <div className="space-y-3">
                                           <Label htmlFor="memGrade">
                                             درجة الحفظ
                                           </Label>
@@ -349,12 +353,27 @@ const TeacherDashboard: React.FC = () => {
                                             placeholder="مثال: 10/10"
                                           />
                                         </div>
+                                        <div className="space-y-3">
+                                          <Label htmlFor="newMem">
+                                            حفظ الجديد
+                                          </Label>
+                                          <Input
+                                            id="newMem"
+                                            value={newLog.newMem}
+                                            onChange={(e) =>
+                                              setNewLog({
+                                                ...newLog,
+                                                newMem: e.target.value,
+                                              })
+                                            }
+                                          />
+                                        </div>
                                       </>
                                     )}
 
                                     {capabilities.canGradeRev && (
                                       <>
-                                        <div className="space-y-2">
+                                        <div className="space-y-3">
                                           <Label htmlFor="revDone">
                                             تم المراجعة
                                           </Label>
@@ -370,7 +389,7 @@ const TeacherDashboard: React.FC = () => {
                                             // placeholder="مثال: 10/10"
                                           />
                                         </div>
-                                        <div className="space-y-2">
+                                        <div className="space-y-3">
                                           <Label htmlFor="revGrade">
                                             درجة المراجعة
                                           </Label>
@@ -384,6 +403,21 @@ const TeacherDashboard: React.FC = () => {
                                               })
                                             }
                                             placeholder="مثال: 8/10"
+                                          />
+                                        </div>
+                                        <div className="space-y-3">
+                                          <Label htmlFor="overAllMem">
+                                            اجمالي الحفظ
+                                          </Label>
+                                          <Input
+                                            id="overAllMem"
+                                            value={newLog.overAllMem}
+                                            onChange={(e) =>
+                                              setNewLog({
+                                                ...newLog,
+                                                overAllMem: e.target.value,
+                                              })
+                                            }
                                           />
                                         </div>
                                       </>
@@ -429,7 +463,9 @@ const TeacherDashboard: React.FC = () => {
 
         <TabsContent value="studentProfile">
           {/* Student Profile */}
-          {studentProfile && <StudentProfile studentId={studentProfile} />}
+          {studentProfile && (
+            <StudentProfile studentId={studentProfile} userRole="User" />
+          )}
         </TabsContent>
       </Tabs>
     </div>

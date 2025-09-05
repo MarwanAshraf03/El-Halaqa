@@ -34,6 +34,7 @@ import {
 } from "lucide-react";
 import AttendanceManager from "../attendance/AttendanceManager";
 import StudentProfile from "../students/StudentProfile";
+import { set } from "date-fns";
 
 const AdminDashboard: React.FC = () => {
   const [students, setStudents] = useState<Student[]>([]);
@@ -48,6 +49,16 @@ const AdminDashboard: React.FC = () => {
   });
   const { toast } = useToast();
   const [studentProfile, setStudentProfile] = useState("");
+  const [activeTab, setActiveTab] = useState("students");
+
+  // where to use activeTab state
+  // This state is used to control which tab is currently active in the dashboard
+  // It can be used to conditionally render content based on the active tab
+  // For example, when a student profile is viewed, we can set the activeTab to "studentProfile"
+  // and render the StudentProfile component accordingly.
+  // This allows us to switch between different sections of the dashboard seamlessly.
+  // It can also be used to manage the state of the tabs in the UI, such as highlighting the active tab.
+  // This state is used to control which tab is currently active in the dashboard
 
   useEffect(() => {
     loadStudents();
@@ -73,7 +84,7 @@ const AdminDashboard: React.FC = () => {
           }
         }
       }
-
+      setActiveTab("students");
       setStudents(studentsData);
     } catch (error) {
       toast({
@@ -364,19 +375,16 @@ const AdminDashboard: React.FC = () => {
                                   console.log(
                                     `Viewing profile for ${student.id}`
                                   );
-                                  // setStudentProfile((id) => !prev); // toggle
                                   setStudentProfile(student.id);
-                                  // return (
-                                  //   <StudentProfile studentId={student.id} />
-                                  // );
+                                  // on click change the tab from students to studentProfile
+                                  // This will be handled by the parent component
+                                  setActiveTab("studentProfile");
+                                  // setStudentProfile(student.id);
                                 }}
                               >
                                 عرض التفاصيل
                               </Button>
                             </div>
-                            {/* {studentProfile && (
-                              <StudentProfile studentId={student.id} />
-                            )} */}
                             <div className="flex items-center gap-2">
                               <Badge variant="secondary">
                                 إجمالي: {student.overAllMem}
@@ -399,9 +407,12 @@ const AdminDashboard: React.FC = () => {
         <TabsContent value="attendance">
           <AttendanceManager onAttendanceTaken={loadStudents} />
         </TabsContent>
+
         <TabsContent value="studentProfile">
           {/* <AttendanceManager onAttendanceTaken={loadStudents} /> */}
-          {studentProfile && <StudentProfile studentId={studentProfile} />}
+          {studentProfile && (
+            <StudentProfile studentId={studentProfile} userRole="Admin" />
+          )}
         </TabsContent>
       </Tabs>
     </div>

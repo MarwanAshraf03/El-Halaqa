@@ -62,6 +62,18 @@ const AttendanceManager: React.FC<AttendanceManagerProps> = ({
       });
     } finally {
       setLoading(false);
+      try {
+        const attendance = await apiService.getAttendance(
+          new Date().toISOString().split("T")[0]
+        );
+        const attendanceLines = attendance.trim().split("\n");
+        const attendedIds = new Set(
+          attendanceLines.map((line) => line.split(" + ")[1].trim())
+        );
+        setSelectedStudents(attendedIds);
+      } catch (error) {
+        null;
+      }
     }
   };
 
@@ -72,6 +84,7 @@ const AttendanceManager: React.FC<AttendanceManagerProps> = ({
     } else {
       newSelected.add(studentName);
     }
+    console.log("Selected Students:", newSelected);
     setSelectedStudents(newSelected);
   };
 
@@ -100,7 +113,7 @@ const AttendanceManager: React.FC<AttendanceManagerProps> = ({
       const stdNames = [];
       selectedStudents.forEach((id) => {
         const student = students.find((s) => s.id === id);
-        stdNames.push(student.name_arb);
+        stdNames.push(`${student.name_arb} + ${student.id}`);
       });
       // const attendanceList = Array.from(selectedStudents);
       const attendanceList = Array.from(stdNames);
@@ -154,10 +167,10 @@ const AttendanceManager: React.FC<AttendanceManagerProps> = ({
                 تسجيل الحضور
               </CardTitle>
               <p className="text-sm text-muted-foreground">
-                {new Date().toLocaleDateString("ar-SA", {
-                  weekday: "long",
+                {new Date().toLocaleDateString("ar-US", {
+                  weekday: "short",
                   year: "numeric",
-                  month: "long",
+                  month: "short",
                   day: "numeric",
                 })}
               </p>

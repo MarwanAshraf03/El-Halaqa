@@ -1,10 +1,10 @@
 import { User, Student, StudentLog } from "../types/auth";
 
-// const API_BASE_URL =
-//   process.env.NODE_ENV === "production"
-//     ? "https://your-api-domain.com"
-//     : "http://localhost:3000/api";
-const API_BASE_URL = "/api";
+const API_BASE_URL =
+  process.env.NODE_ENV === "production"
+    ? "https://your-api-domain.com"
+    : "http://localhost:3000/api";
+// const API_BASE_URL = "/api";
 
 class ApiService {
   private async request<T>(
@@ -88,7 +88,18 @@ class ApiService {
     });
   }
 
-  // Logs and Attendance
+  // Get Attendance for the date
+  async getAttendance(date: string): Promise<string> {
+    const response = await fetch(`${API_BASE_URL}/get_attendance`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ date }),
+    });
+    return response.text();
+  }
+
   async takeAttendance(std_names_list: string[]): Promise<string> {
     const response = await fetch(`${API_BASE_URL}/take_attendance`, {
       method: "POST",
@@ -119,6 +130,26 @@ class ApiService {
     if (date) params.append("date", date);
 
     return this.request(`/get_logs?${params.toString()}`);
+  }
+
+  async deleteLog(studentId: string, logId: string): Promise<boolean> {
+    const response = await fetch(`${API_BASE_URL}/delete_log`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ studentId, logId }),
+    });
+    console.log("Response:", response);
+    console.log("Response json:", response.json());
+
+    if (!response.ok) {
+      console.log("Error response:", response);
+      const errorText = await response.text();
+      throw new Error(errorText || `HTTP error! status: ${response.status}`);
+    }
+    console.log("line 151");
+    return true;
   }
 }
 

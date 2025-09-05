@@ -35,8 +35,9 @@ export class Attendance {
       path.join(this.#directory, `${name}.txt`),
       "utf8"
     );
-    ret = ret.split("\n");
-    return ret.filter((item) => item.trim() !== ""); // filter out empty lines
+    // ret = ret.split("\n");
+    // return ret.filter((item) => item.trim() !== ""); // filter out empty lines
+    return ret;
   }
 }
 

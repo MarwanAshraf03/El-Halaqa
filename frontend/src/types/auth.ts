@@ -20,8 +20,10 @@ export interface StudentLog {
   teacherUserName: string;
   memDone?: string;
   memGrade?: string;
+  newMem?: string;
   revDone?: string;
   revGrade?: string;
+  overAllMem?: string;
   time: string;
   notes: string;
 }

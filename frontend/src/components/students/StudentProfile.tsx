@@ -19,13 +19,18 @@ import {
   Filter,
   ChevronDown,
   ChevronUp,
+  Trash2,
 } from "lucide-react";
 
 interface StudentProfileProps {
   studentId: string;
+  userRole: string;
 }
 
-const StudentProfile: React.FC<StudentProfileProps> = ({ studentId }) => {
+const StudentProfile: React.FC<StudentProfileProps> = ({
+  studentId,
+  userRole,
+}) => {
   const [student, setStudent] = useState<Student | null>(null);
   const [logs, setLogs] = useState<Record<string, StudentLog>>({});
   const [loading, setLoading] = useState(true);
@@ -85,6 +90,33 @@ const StudentProfile: React.FC<StudentProfileProps> = ({ studentId }) => {
     }
   };
 
+  const deleteLog = async (studentId: string, logId: string) => {
+    if (!studentId || !logId) return;
+
+    try {
+      console.log("before deletion");
+      await apiService.deleteLog(studentId, logId);
+      console.log("after deletion");
+      toast({
+        variant: "default",
+        title: "تم الحذف بنجاح",
+        description: "تم حذف السجل بنجاح",
+      });
+      // Remove the deleted log from the state
+      setLogs((prevLogs) => {
+        const updatedLogs = { ...prevLogs };
+        delete updatedLogs[logId];
+        return updatedLogs;
+      });
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "خطأ في الحذف",
+        description: "تعذر حذف السجل",
+      });
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center p-8">
@@ -114,8 +146,7 @@ const StudentProfile: React.FC<StudentProfileProps> = ({ studentId }) => {
 
   const completedMem = logsArray.filter((log) => log.memDone === "true").length;
   const completedRev = logsArray.filter((log) => log.revDone === "true").length;
-  const memProgress =
-    student.overAllMem > 0 ? (completedMem / student.overAllMem) * 100 : 0;
+  const memProgress = 100;
 
   return (
     <div className="space-y-6">
@@ -139,7 +170,12 @@ const StudentProfile: React.FC<StudentProfileProps> = ({ studentId }) => {
                   <Calendar className="h-4 w-4 text-primary" />
                   <span className="text-sm">
                     تاريخ الميلاد:{" "}
-                    {new Date(student.bDate).toLocaleDateString("ar-SA")}
+                    {/* {new Date(student.bDate).toLocaleDateString("ar-SA")} */}
+                    {new Date(student.bDate).toLocaleDateString("en-GB", {
+                      day: "2-digit",
+                      month: "2-digit",
+                      year: "numeric",
+                    })}
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
@@ -277,8 +313,17 @@ const StudentProfile: React.FC<StudentProfileProps> = ({ studentId }) => {
                         <div className="flex items-center gap-2 mb-2">
                           <Clock className="h-4 w-4 text-muted-foreground" />
                           <span className="text-sm text-muted-foreground">
-                            {new Date(log.time).toLocaleDateString("ar-SA")} -{" "}
-                            {new Date(log.time).toLocaleTimeString("ar-SA")}
+                            {new Date(log.time).toLocaleDateString("en-GB", {
+                              day: "2-digit",
+                              month: "2-digit",
+                              year: "numeric",
+                            })}
+                            -{" "}
+                            {new Date(log.time).toLocaleTimeString("en-US", {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              hour12: true,
+                            })}
                           </span>
                         </div>
 
@@ -310,10 +355,35 @@ const StudentProfile: React.FC<StudentProfileProps> = ({ studentId }) => {
 
                         {log.notes && (
                           <p className="text-sm text-muted-foreground font-arabic mt-2">
-                            {log.notes}
+                            {log.notes !== "null"
+                              ? `ملاحظات: ${log.notes}`
+                              : "لا توجد ملاحظات"}
                           </p>
                         )}
                       </div>
+                      {userRole === "Admin" && (
+                        <div className="flex-2">
+                          <div className="flex items-center gap-2 mb-2">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="text-red-500 hover:bg-red-100"
+                              onClick={() => {
+                                if (
+                                  window.confirm(
+                                    "هل أنت متأكد أنك تريد حذف هذا السجل؟"
+                                  )
+                                ) {
+                                  // Call a function to delete the log
+                                  deleteLog(student.id, log.id);
+                                }
+                              }}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </CardContent>
                 </Card>

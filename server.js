@@ -73,6 +73,19 @@ app.post("/api/take_attendance", (req, res) => {
   }
 });
 
+app.post("/api/get_attendance", (req, res) => {
+  const { date } = req.body;
+  if (!date) {
+    return res.status(400).send("Must provide name.");
+  }
+  try {
+    const attendance = FileStorageSystemController.get_attendance(date);
+    res.send(attendance);
+  } catch (error) {
+    res.status(500).send("Error getting attendance: " + error.message);
+  }
+});
+
 app.post("/api/create_teacher", (req, res) => {
   const { userName, password, type } = req.body;
   try {
@@ -165,6 +178,19 @@ app.get("/api/get_logs", (req, res) => {
   }
 });
 
+app.post("/api/delete_log", (req, res) => {
+  const { studentId, logId } = req.body;
+  if (!studentId || !logId) {
+    return res.status(400).send("Must provide studentId and logId.");
+  }
+  try {
+    FileStorageSystemController.delete_log(studentId, logId);
+    res.json({ message: "Log deleted successfully." });
+  } catch (error) {
+    res.status(500).send("Error deleting log: " + error.message);
+  }
+});
+
 // app.g/apiet("*", (req, res) => {
 //   res.sendFile(path.join(__dirname, "dist", "index.html"));
 // });
@@ -199,10 +225,10 @@ app.get("*", (req, res) => {
 
 // ================= START SERVER =================
 
-app.listen(port, "0.0.0.0", () => {
-  console.log(`Server running at http://0.0.0.0:${port}`);
-});
-
-// app.listen(port, () => {
-//   console.log(`Server is running on http://localhost:${port}`);
+// app.listen(port, "0.0.0.0", () => {
+//   console.log(`Server running at http://0.0.0.0:${port}`);
 // });
+
+app.listen(port, () => {
+  console.log(`Server is running on http://localhost:${port}`);
+});

@@ -115,14 +115,25 @@ export class Student {
   }
 
   save_logs(log) {
-    const { teacherId, memDone, memGrade, revDone, revGrade, time, notes } =
-      log;
+    const {
+      teacherId,
+      memDone,
+      memGrade,
+      newMem,
+      revDone,
+      revGrade,
+      overAllMem,
+      time,
+      notes,
+    } = log;
     console.log("save_logs called with parameters:", {
       teacherId,
       memDone,
       memGrade,
+      newMem,
       revDone,
       revGrade,
+      overAllMem,
       time,
       notes,
     });
@@ -151,6 +162,16 @@ export class Student {
         notes: notes || "null",
       };
     this.#logs = studentData.logs;
+    if (overAllMem || newMem) {
+      console.log("Updating overAllMem and newMem:", {
+        overAllMem,
+        newMem,
+      });
+      studentData.overAllMem = overAllMem ? overAllMem : studentData.overAllMem;
+      this.#overAllMem = overAllMem ? overAllMem : studentData.overAllMem;
+      studentData.newMem = newMem ? newMem : studentData.newMem;
+      this.#newMem = newMem ? newMem : studentData.newMem;
+    }
     fs.writeFileSync(this.#filePath, JSON.stringify(studentData, null, 2));
   }
 
@@ -166,5 +187,23 @@ export class Student {
       return Object.fromEntries(logs);
     }
     return studentData.logs;
+  }
+
+  delete_log(logId) {
+    if (!fs.existsSync(this.#filePath)) {
+      throw new Error(`Student with id ${this.#id} does not exist.`);
+    }
+    const studentData = JSON.parse(fs.readFileSync(this.#filePath, "utf8"));
+    console.log("Current logs:", studentData.logs);
+    console.log("Log ID to delete:", logId);
+    console.log("log ids:", Object.keys(studentData.logs));
+    console.log("log exists:", Object.keys(studentData.logs).includes(logId));
+    if (!Object.keys(studentData.logs).includes(logId)) {
+      throw new Error(`Log with id ${logId} does not exist.`);
+    }
+    delete studentData.logs[logId];
+    this.#logs = studentData.logs;
+    fs.writeFileSync(this.#filePath, JSON.stringify(studentData, null, 2));
+    return true;
   }
 }

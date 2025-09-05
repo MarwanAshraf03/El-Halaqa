@@ -1,6 +1,8 @@
+import { getDiffieHellman } from "crypto";
 import fs from "fs";
 import os from "os";
 import path from "path";
+// import Group from "./group.js"
 import { v4 as uuidv4 } from "uuid";
 
 // user structure {"id": uuid, "userName": "userName", "password": "passwordHashed", "type": "type => ["admin", "Mem", "Rev"]"}
@@ -146,5 +148,100 @@ export class User {
     user.id = id;
     fs.writeFileSync(this.#filePath, JSON.stringify(users, null, 2), "utf8");
     return user;
+  }
+
+  addGroup(object) {
+    const { id, name, students } = object;
+    const groupDirPath = path.join(
+      os.homedir(),
+      "/storage/documents/El-Halaqa/groups/"
+    );
+    const groupFilePath = path.join(groupDirPath, "groups.json");
+    if (!fs.existsSync(groupDirPath)) {
+      fs.mkdirSync(groupDirPath, { recursive: true });
+    }
+
+    if (!this.#id) {
+      this.saveUser(this.#type);
+    }
+    const group = new Group({
+      id: id,
+      name: name,
+      students: students,
+      teacherId: this.#id,
+    });
+
+    const ret = group.save();
+    if (!ret) return false;
+    return true;
+  }
+}
+
+class Group {
+  #id;
+  #name;
+  #teacherId;
+  #students = [];
+  #directory = path.join(os.homedir(), "/storage/documents/El-Halaqa/groups");
+  #filePath = path.join(this.#directory, "groups.json");
+
+  // structure of groups.json: {"groupId": {"teacherId": "teacherId", "name": "group_name", "students": ["student_id1", "student_id2"]}}
+  constructor(object) {
+    const { id, name, students, teacherId } = object;
+
+    // Ensure the directory exists before writing
+    if (!fs.existsSync(this.#directory)) {
+      fs.mkdirSync(this.#directory, { recursive: true });
+    }
+
+    // Load existing group data if id is provided
+    if (id) {
+      const groups = JSON.parse(fs.readFileSync(this.#filePath, "utf8"));
+      if (groups[id]) {
+        this.#name = groups[id].name;
+        this.#students = groups[id].students || [];
+        this.#teacherId = groups[id].teacherId;
+      } else {
+        throw new Error(`Group with id ${id} does not exist.`);
+      }
+    } else if (name && students && teacherId) {
+      this.#id = uuidv4();
+      this.#students = students || [];
+      this.#name = name;
+      this.#teacherId = teacherId;
+    } else {
+      throw new Error(
+        "Invalid parameters. Must provide ( id ) or ( name, students, and teacherId )."
+      );
+    }
+  }
+
+  get id() {
+    return this.#id;
+  }
+
+  get name() {
+    return this.#name;
+  }
+
+  get students() {
+    return this.#students;
+  }
+
+  get teacherId() {
+    return this.#teacherId;
+  }
+
+  save() {
+    const groups = JSON.parse(fs.readFileSync(this.#filePath, "utf8"));
+    if (this.#id in Object.keys(groups)) return null;
+    const group = {
+      teacherId: this.#teacherId,
+      name: this.#name,
+      students: this.#students,
+    };
+    groups[this.#id] = group;
+    fs.writeFileSync(this.#filePath, JSON.stringify(groups, null, 2), "utf8");
+    return group;
   }
 }
